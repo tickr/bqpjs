@@ -3,16 +3,23 @@ import getTokenize from './tokenize'
 import createRpn from './create-rpn'
 import createTree from './create-tree'
 
-const ruleNames = ['and', 'plus', 'or', 'tilde', 'not', 'minus', 'openParen', 'closeParen', 'quote', 'space']
 const defaultOperation = 'AND'
 
-const selectedRules = ruleNames.filter((name)=>name in rules).map((name)=>rules[name])
-const tokenize = getTokenize(selectedRules, defaultOperation)
+let selectedRules = null;
+let tokenize = null;
+setRules(['and', 'plus', 'or', 'tilde', 'not', 'minus', 'openParen', 'closeParen', 'quote', 'space']);
 
-export default function bqpjs(searchStr) {
+export function setRules(ruleNames) {
+  selectedRules = ruleNames.filter((name)=>name in rules).map((name)=>rules[name])
+  tokenize = getTokenize(selectedRules, defaultOperation);
+}
+
+export function parse(searchStr, options) {
+  options || (options = {});
   let tokens = tokenize(searchStr)
-  let rpn = createRpn(tokens)
-  let tree = createTree(rpn)
+
+  let rpn = options.skipRpn ? null : createRpn(tokens)
+  let tree = options.skipTree ? null : createTree(rpn)
 
   return {
     // tokens aren't really a part of the interface, but I'm exposing them
