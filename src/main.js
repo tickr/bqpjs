@@ -14,12 +14,11 @@ export function setRules(ruleNames) {
   tokenize = getTokenize(selectedRules, defaultOperation);
 }
 
-export function parse(searchStr, options) {
-  options || (options = {});
+export function parse(searchStr) {
   let tokens = tokenize(searchStr)
 
-  let rpn = options.skipRpn ? null : createRpn(tokens)
-  let tree = options.skipTree ? null : createTree(rpn)
+  let rpn = createRpn(tokens)
+  let tree = createTree(rpn)
 
   return {
     // tokens aren't really a part of the interface, but I'm exposing them
